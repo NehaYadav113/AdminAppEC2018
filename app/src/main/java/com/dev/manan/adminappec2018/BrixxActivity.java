@@ -1,7 +1,9 @@
 package com.dev.manan.adminappec2018;
 
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,10 +24,10 @@ import java.util.HashMap;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class BrixxActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler{
-    private Button qrButton, postButton, notificationButton;
+    private Button qrButton, postButton, notificationButton,viewposts;
     private ZXingScannerView zXingScannerView;
     private EditText editText;
-
+    SharedPreferences prefs;
 
 
     @Override
@@ -35,10 +37,18 @@ public class BrixxActivity extends AppCompatActivity implements ZXingScannerView
 
         com.google.firebase.messaging.FirebaseMessaging.getInstance().subscribeToTopic("Topic");
 
+        prefs=getApplicationContext().getSharedPreferences("com.dev.manan.adminappec2018", Context.MODE_PRIVATE);
+
+
+        final String token = prefs.getString("token","");
+        System.out.println(token);
+
+
         qrButton = (Button) findViewById(R.id.qrButton);
         postButton = (Button) findViewById(R.id.sendPost);
         notificationButton = (Button) findViewById(R.id.sendNotif);
         editText=(EditText)findViewById(R.id.edit);
+        viewposts=(Button)findViewById(R.id.view_posts);
 
         postButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +86,14 @@ public class BrixxActivity extends AppCompatActivity implements ZXingScannerView
             }
         });
 
+        viewposts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                    Intent i=new Intent(getApplicationContext(),PostActivity.class);
+                    startActivity(i);
+            }
+        });
 
 
 

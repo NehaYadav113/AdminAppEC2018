@@ -31,4 +31,10 @@
         android:text="Write A Post"
         android:id="@+id/sendPost"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View Posts"
+        android:id="@+id/view_posts"/>
+
 </LinearLayout>
