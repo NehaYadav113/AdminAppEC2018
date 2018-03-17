@@ -1,5 +1,6 @@
 package com.dev.manan.adminappec2018;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
@@ -18,16 +19,17 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.zxing.Result;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.HashMap;
 
-import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
-public class BrixxActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler{
+public class BrixxActivity extends AppCompatActivity{
     private Button qrButton, postButton, notificationButton,viewposts;
-    private ZXingScannerView zXingScannerView;
     private EditText editText;
     SharedPreferences prefs;
+    private IntentIntegrator qrScan;
 
 
     @Override
@@ -50,6 +52,8 @@ public class BrixxActivity extends AppCompatActivity implements ZXingScannerView
         editText=(EditText)findViewById(R.id.edit);
         viewposts=(Button)findViewById(R.id.view_posts);
 
+        qrScan = new IntentIntegrator(this);
+
         postButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,10 +62,11 @@ public class BrixxActivity extends AppCompatActivity implements ZXingScannerView
                 dialogFragment.show(fm, "Add Post Fragment");
             }
         });
+
         qrButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                scan(view);
+                qrScan.initiateScan();
             }
         });
 
@@ -94,45 +99,19 @@ public class BrixxActivity extends AppCompatActivity implements ZXingScannerView
                     startActivity(i);
             }
         });
-
-
-
-    }
-    public void scan(View view){
-        /*zXingScannerView=new ZXingScannerView(getApplicationContext());
-        setContentView(zXingScannerView);
-        zXingScannerView.setResultHandler(this);
-        zXingScannerView.startCamera();*/
-
-        Intent intent = new Intent("com.google.zxing.client.android.SCAN");
-        intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-        startActivityForResult(intent, 0);
-    }
-    @Override
-    protected void onPause() {
-        super.onPause();
-      //  zXingScannerView.stopCamera();
     }
 
-
-    @Override
-    public void handleResult(Result result) {
-        Toast.makeText(getApplicationContext(),result.getText(),Toast.LENGTH_SHORT).show();
-        //zXingScannerView.resumeCameraPreview(this);
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode == 0) {
-            if (resultCode == RESULT_OK) {
-                String contents = intent.getStringExtra("SCAN_RESULT");
-                String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
-
-                Log.d("yi",contents);
-                Log.d("yi",format);
-                // Handle successful scan
-            } else if (resultCode == RESULT_CANCELED) {
-                // Handle cancel
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
             }
+        } else {
+            // This is important, otherwise the result will not be passed to the fragment
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 }

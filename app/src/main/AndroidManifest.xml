@@ -21,7 +21,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".BrixxActivity" />
+        <activity android:name=".BrixxActivity" >
+        </activity>
 
         <service android:name=".MyFirebaseMessagingService">
             <intent-filter>
@@ -42,6 +43,7 @@
 
         <activity android:name=".PostActivity" />
         <activity android:name=".CommentActivity"></activity>
+
     </application>
 
 </manifest>

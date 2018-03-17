@@ -38,18 +38,32 @@
                 android:maxLines="10"
                 android:scrollHorizontally="false" />
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/field_body"
+                android:id="@+id/add_image"
+                android:text="Add image"/>
             <TextView
                 android:id="@+id/sendpost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="POST"
+                android:layout_toRightOf="@+id/add_image"
+                android:layout_alignParentRight="true"
                 android:textSize="20dp"
                 android:layout_below="@+id/field_body"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="200dp"
                 android:textColor="#000000"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="22dp" />
+                 />
+
+
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_below="@+id/add_image"
+                android:layout_marginTop="30dp"/>
 
 
         </RelativeLayout>

@@ -48,7 +48,7 @@
             android:layout_below="@+id/ctc_ll_clubtime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-       />
+            />
         <ImageView
             android:id="@+id/ctc_postimage"
             android:layout_margin="4dp"
@@ -111,28 +111,28 @@
             android:layout_marginTop="10dp"
             >
 
-            <TextView
+            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
-                android:text="Approval Status"
-                android:id="@+id/approval"
-                android:textColor="#000000"
+                android:text="Acept"
+                android:id="@+id/post_accept"
+                android:textColor="#ffffff"
                 android:layout_marginLeft="50dp"
                 android:textStyle="bold"
-                android:textSize="20dp"
+                android:background="#76FF03"
                 />
 
-            <TextView
+            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:text="Reject"
-                android:layout_toRightOf="@id/approval"
+                android:layout_toRightOf="@id/post_accept"
                 android:textStyle="bold"
-                android:textColor="#000000"
-                android:textSize="18dp"
-                android:id="@+id/status"
+                android:textColor="#ffffff"
+                android:id="@+id/post_reject"
                 android:layout_marginLeft="50dp"
-                 />
+                android:background="#F44336"
+                />
 
         </RelativeLayout>
     </RelativeLayout>

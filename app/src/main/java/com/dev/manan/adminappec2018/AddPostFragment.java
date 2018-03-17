@@ -24,6 +24,8 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,7 +58,7 @@ public class AddPostFragment extends DialogFragment {
 
         final String token = prefs.getString("token","");
 
-        if(token=="63617168") {
+        if(token.equals("63617168")) {
             mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child("Brixx");
         }
         else {
@@ -68,16 +70,25 @@ public class AddPostFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
 
-                Map<String,String> m=new HashMap<>();
-                m.put("approval","false");
-                m.put("caption",caption);
-                m.put("image","hi");
-                m.put("likes","0");
-                m.put("time", ServerValue.TIMESTAMP.toString());
 
+                String title,image;
+                int likes;
+                long time;
+                boolean approval;
+                ArrayList<Comment> comments=new ArrayList<>();
+                ArrayList<likesModel> likefids=new ArrayList<>();
                 String postid=mDatabase.push().getKey();
 
-                mDatabase.child(postid).setValue(m).addOnCompleteListener(new OnCompleteListener<Void>() {
+                title=caption;
+                image="";
+                time= System.currentTimeMillis();
+                approval=false;
+                likes=0;
+
+                NewPost newPost=new NewPost(title,image,approval,likes,time,comments,likefids);
+
+
+                mDatabase.child(postid).setValue(newPost).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                     Toast.makeText(getActivity(),"yeah",Toast.LENGTH_SHORT).show();
@@ -85,7 +96,6 @@ public class AddPostFragment extends DialogFragment {
                 });
             }
         });
-
 
 
         return rootView;

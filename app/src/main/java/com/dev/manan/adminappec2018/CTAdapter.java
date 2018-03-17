@@ -2,30 +2,25 @@ package com.dev.manan.adminappec2018;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
-
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 
 public class CTAdapter extends RecyclerView.Adapter<CTAdapter.MyViewHolder>{
@@ -33,12 +28,15 @@ public class CTAdapter extends RecyclerView.Adapter<CTAdapter.MyViewHolder>{
     private List<postsModel> postsList;
     private Context context;
     private postsModel topic;
+    private String token="";
+    SharedPreferences prefs;
     int liked=0;
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView clubName,caption,likes,comments,postTime;
+        public TextView clubName,caption,likes,comments,postTime,approved;
         public ImageView clubIcon,like, comment,share;
+        public Button acceptbutton,rejectbutton;
 
 
         public MyViewHolder(View view) {
@@ -52,19 +50,41 @@ public class CTAdapter extends RecyclerView.Adapter<CTAdapter.MyViewHolder>{
             like = (ImageView) view.findViewById(R.id.ctc_likebtn);
             comment = (ImageView) view.findViewById(R.id.ctc_commentbtn);
             share = (ImageView) view.findViewById(R.id.ctc_sharebtn);
+
+            if(token.equals("63617168"))
+            {
+                acceptbutton=(Button)view.findViewById(R.id.post_accept);
+                rejectbutton=(Button)view.findViewById(R.id.post_reject);
+            }
+            else
+            {
+                approved=(TextView)view.findViewById(R.id.status);
+            }
         }
     }
 
 
     public CTAdapter(Context context,List<postsModel> topicList) {
+
+        prefs=context.getSharedPreferences("com.dev.manan.adminappec2018", Context.MODE_PRIVATE);
+        token = prefs.getString("token","");
+
         this.postsList = topicList;
         this.context =context;
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.culmyca_card, parent, false);
+        View itemView;
+        if(token.equals("63617168")) {
+            itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.culmyca_card1, parent, false);
+        }
+        else
+        {
+            itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.culmyca_card, parent, false);
+        }
 
         return new MyViewHolder(itemView);
     }
@@ -73,139 +93,31 @@ public class CTAdapter extends RecyclerView.Adapter<CTAdapter.MyViewHolder>{
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         topic = postsList.get(position);
         holder.caption.setText(topic.title);
-        holder.postTime.setText(topic.time);
+        holder.postTime.setText(Long.toString(topic.time));
         holder.caption.setText(topic.title);
         holder.clubName.setText(topic.clubName);
-        holder.likes.setText(topic.likes+" likes");
-        holder.comments.setText(Integer.toString(topic.comments.size())+" comments");
-        DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("posts").child(postsList.get(holder.getAdapterPosition()).clubName).child(postsList.get(holder.getAdapterPosition()).postid);
+        holder.likes.setText(Integer.toString(topic.likes) + " likes");
+        holder.comments.setText(Integer.toString(topic.comments.size()) + " comments");
+
+        if(token.equals("63617168")) {
 
 
-        /*final AccessToken token=AccessToken.getCurrentAccessToken();
-        if(token!=null) {
-*/
-            postRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            holder.acceptbutton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    int flg = 0;
-                    postsModel m = dataSnapshot.getValue(postsModel.class);
+                public void onClick(View view) {
 
-                    holder.likes.setText(m.likes + " likes");
-                    for (DataSnapshot mlikes : dataSnapshot.child("likefids").getChildren()) {
-                        likesModel l = mlikes.getValue(likesModel.class);
-
-                        /*if (l.fid.equals(Profile.getCurrentProfile().getId())) {
-                            flg = 1;
-                            break;
-                        }*/
-                    }
-                    /*if (flg == 1) {
-                        holder.like.setImageResource(R.drawable.xunbao_back);
-                    } else {
-                        holder.like.setImageResource(R.drawable.xunbao_about);
-
-                    }*/
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
+                    DatabaseReference mdatabase= FirebaseDatabase.getInstance().getReference().child("posts").child(topic.clubName).child(topic.postid).child("approval");
+                    mdatabase.setValue(true);
                 }
             });
-
-
-
-        holder.like.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                /*AccessToken token=AccessToken.getCurrentAccessToken();
-                if(token==null) {
-                    dialog.show();
-                }
-                else {*/
-
-                    DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("posts").child(postsList.get(holder.getAdapterPosition()).clubName).child(postsList.get(holder.getAdapterPosition()).postid);
-
-                    postRef.runTransaction(new Transaction.Handler() {
-
-                        @Override
-                        public Transaction.Result doTransaction(MutableData mutableData) {
-                            postsModel p = mutableData.getValue(postsModel.class);
-
-                            if (p == null) {
-                                return Transaction.success(mutableData);
-
-                            }
-                            Log.v("heyt","1");
-                            ArrayList<likesModel> alllikes=new ArrayList<likesModel>();
-                            for(MutableData mlikes: mutableData.child("likefids").getChildren()) {
-                                likesModel l = mlikes.getValue(likesModel.class);
-                                Log.v("heyt",l.fid);
-                                alllikes.add(l);
-                            }
-
-
-                            Log.v("heyt","2");
-                            p.likefids=alllikes;
-                            int flag=0;
-
-
-                            Log.v("heyt","3");
-                            for(likesModel l:p.likefids){
-                                //Log.v("heyt",l.fid+Profile.getCurrentProfile().getId());
-                                /*if(l.fid.equals(Profile.getCurrentProfile().getId())){
-                                    flag=1;
-                                    break;
-                                }*/
-                            }
-
-                            Log.v("heyt","4");
-
-                            if (flag==1) {
-                                //p.likes = p.likes - 1;
-                                int i=0;
-                                liked=0;
-
-                                Log.v("heyt","10");
-                                for(likesModel l: p.likefids){
-                                    /*if(l.fid.equals(Profile.getCurrentProfile().getId())){
-                                        p.likefids.remove(i);
-                                        Log.v("i value",Integer.toString(p.likefids.size()));
-                                        break;
-                                    }*/
-                                    i++;
-                                }
-                            } else {
-
-                                liked=1;
-                                Log.d("added",p.likes);
-                                p.likes = p.likes + 1;
-                               // p.likefids.add(new likesModel(Profile.getCurrentProfile().getId()));
-                            }
-                            mutableData.setValue(p);
-
-                            Log.v("heyt","5");
-                            return Transaction.success(mutableData);
-                        }
-
-                        @Override
-                        public void onComplete(DatabaseError databaseError, boolean b,
-                                               DataSnapshot dataSnapshot) {
-                            /*if(liked==0){
-                                topic.likes--;
-                                holder.likes.setText(topic.likes+"");
-                            }
-                            else{
-                                topic.likes++;
-                                holder.likes.setText(topic.likes+"");
-
-                            }*/
-                            // Transaction completed
-                        }
-                    });
-            }
-        });
+        }
+        else
+        {
+            if (topic.isApproval())
+                holder.approved.setText("Approved");
+            else
+                holder.approved.setText("Pending");
+        }
 
         holder.comment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,22 +128,6 @@ public class CTAdapter extends RecyclerView.Adapter<CTAdapter.MyViewHolder>{
                         .putExtra("eventId", topic.getPostid()));
             }
         });
-
-        holder.share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String msg = "Check out this post by "+topic.getClubName()+". Follow the link:";
-                shareTextMessage(msg);
-            }
-        });
-
-    }
-    private void shareTextMessage(String msg) {
-        Intent i = new Intent(Intent.ACTION_SEND);
-        i.setType("text/plain");
-        i.putExtra(Intent.EXTRA_TEXT, msg);
-        i.addFlags(FLAG_ACTIVITY_NEW_TASK);
-        context.getApplicationContext().startActivity(i);
     }
 
     @Override

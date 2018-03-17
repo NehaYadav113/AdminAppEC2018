@@ -36,7 +36,7 @@ public class PostActivity extends AppCompatActivity {
     private CTAdapter mAdapter;
     SwipeRefreshLayout s;
     SharedPreferences prefs;
-    String token;
+    String token,clubnm="";
 
 
     public static AlertDialog.Builder builder;
@@ -76,64 +76,7 @@ public class PostActivity extends AppCompatActivity {
             }
         });
 
-
-        //postReference = FirebaseDatabase.getInstance().getReference("posts");
-        postReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                allposts=new ArrayList<postsModel>();
-                String clubnm="";
-                prefs=getApplicationContext().getSharedPreferences("com.dev.manan.adminappec2018", Context.MODE_PRIVATE);
-                token = prefs.getString("token","");
-
-                if(token.equals("63617169"))
-                    clubnm="Manan";
-                else
-                    clubnm="Manan";
-
-                for(DataSnapshot club:dataSnapshot.getChildren()){
-                    String clubName=club.getKey();
-
-                    System.out.println(clubName + clubnm);
-                    if(clubName.equals(clubnm)) {
-                        for (DataSnapshot posts : club.getChildren()) {
-                            Log.d("posts", posts.toString());
-
-                            postsModel post = posts.getValue(postsModel.class);
-                            post.clubName = clubName;
-                            post.postid = posts.getKey();
-                            ArrayList<Comment> allcomments = new ArrayList<Comment>();
-                            for (DataSnapshot comments : posts.child("comments").getChildren()) {
-                                Comment comment = comments.getValue(Comment.class);
-                                allcomments.add(comment);
-                            }
-
-                            post.comments = allcomments;
-
-                            ArrayList<likesModel> alllikes = new ArrayList<likesModel>();
-                            for (DataSnapshot mlikes : posts.child("likefids").getChildren()) {
-                                likesModel l = mlikes.getValue(likesModel.class);
-                                alllikes.add(l);
-                            }
-
-                            post.likefids = alllikes;
-                            allposts.add(post);
-                        }
-                    }
-                }
-                mLayoutManager = new LinearLayoutManager(getApplicationContext());
-                recyclerView.setLayoutManager(mLayoutManager);
-                mAdapter = new CTAdapter(getApplicationContext(), allposts);
-                recyclerView.setAdapter(mAdapter);
-                progressBar.dismiss();
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        reload();
     }
 
     @Override
@@ -145,68 +88,110 @@ public class PostActivity extends AppCompatActivity {
     }
     public void reload(){
 
-        postReference = FirebaseDatabase.getInstance().getReference("posts");
-        postReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                allposts=new ArrayList<postsModel>();
-                String clubnm="";
-                prefs=getApplicationContext().getSharedPreferences("com.dev.manan.adminappec2018", Context.MODE_PRIVATE);
-                token = prefs.getString("token","");
+        if(token.equals("63617168"))
+        {
+            postReference = FirebaseDatabase.getInstance().getReference("posts");
+            postReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    allposts=new ArrayList<postsModel>();
+                    for(DataSnapshot club:dataSnapshot.getChildren()){
+                        String clubName=club.getKey();
+                        for(DataSnapshot posts:club.getChildren()){
 
-                if(token=="63617169")
-                    clubnm="Manan";
-
-                for(DataSnapshot club:dataSnapshot.getChildren()){
-                    String clubName=club.getKey();
-
-                    if(clubName==clubnm) {
-                        for (DataSnapshot posts : club.getChildren()) {
-                            Log.d("posts", posts.toString());
-
-                            postsModel post = posts.getValue(postsModel.class);
-                            post.clubName = clubName;
-                            post.postid = posts.getKey();
-                            ArrayList<Comment> allcomments = new ArrayList<Comment>();
-                            for (DataSnapshot comments : posts.child("comments").getChildren()) {
+                            postsModel post=posts.getValue(postsModel.class);
+                            post.clubName=clubName;
+                            post.postid=posts.getKey();
+                            ArrayList<Comment> allcomments=new ArrayList<Comment>();
+                            for(DataSnapshot comments: posts.child("comments").getChildren()) {
                                 Comment comment = comments.getValue(Comment.class);
                                 allcomments.add(comment);
                             }
 
-                            post.comments = allcomments;
+                            post.comments=allcomments;
 
-                            ArrayList<likesModel> alllikes = new ArrayList<likesModel>();
-                            for (DataSnapshot mlikes : posts.child("likefids").getChildren()) {
+                            ArrayList<likesModel> alllikes=new ArrayList<likesModel>();
+                            for(DataSnapshot mlikes: posts.child("likefids").getChildren()) {
                                 likesModel l = mlikes.getValue(likesModel.class);
                                 alllikes.add(l);
                             }
 
-                            post.likefids = alllikes;
-                            allposts.add(post);
+                            post.likefids=alllikes;
+
+                            if(!post.isApproval())
+                                allposts.add(post);
                         }
                     }
+                    mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                    recyclerView.setLayoutManager(mLayoutManager);
+                    mAdapter = new CTAdapter(getApplicationContext(), allposts);
+                    recyclerView.setAdapter(mAdapter);
+                    s.setRefreshing(false);
+                    progressBar.dismiss();
+
                 }
-                mLayoutManager = new LinearLayoutManager(getApplicationContext());
-                recyclerView.setLayoutManager(mLayoutManager);
-                mAdapter = new CTAdapter(getApplicationContext(), allposts);
-                recyclerView.setAdapter(mAdapter);
-                progressBar.dismiss();
 
-            }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                }
+            });
 
-            }
-        });
+        }
+        else
+        {
+
+            if(token.equals("63617169"))
+                clubnm="Manan";
+
+
+            postReference = FirebaseDatabase.getInstance().getReference("posts").child(clubnm);
+            postReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    allposts=new ArrayList<postsModel>();
+                    for(DataSnapshot posts:dataSnapshot.getChildren()){
+
+                            postsModel post=posts.getValue(postsModel.class);
+                            post.clubName=clubnm;
+                            post.postid=posts.getKey();
+                            ArrayList<Comment> allcomments=new ArrayList<Comment>();
+                            for(DataSnapshot comments: posts.child("comments").getChildren()) {
+                                Comment comment = comments.getValue(Comment.class);
+                                allcomments.add(comment);
+                            }
+
+                            post.comments=allcomments;
+
+                            ArrayList<likesModel> alllikes=new ArrayList<likesModel>();
+                            for(DataSnapshot mlikes: posts.child("likefids").getChildren()) {
+                                likesModel l = mlikes.getValue(likesModel.class);
+                                alllikes.add(l);
+                            }
+
+                            post.likefids=alllikes;
+                            allposts.add(post);
+                    }
+                    mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                    recyclerView.setLayoutManager(mLayoutManager);
+                    mAdapter = new CTAdapter(getApplicationContext(), allposts);
+                    recyclerView.setAdapter(mAdapter);
+                    s.setRefreshing(false);
+                    progressBar.dismiss();
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
-
-
-
     }
 }
