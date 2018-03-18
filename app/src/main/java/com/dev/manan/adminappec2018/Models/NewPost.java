@@ -1,33 +1,28 @@
-package com.dev.manan.adminappec2018;
+package com.dev.manan.adminappec2018.Models;
 
 import java.util.ArrayList;
 
 /**
- * Created by KASHISH on 10-03-2018.
+ * Created by Kachucool on 17-03-2018.
  */
 
-public class postsModel {
-
+public class NewPost {
 
 
     public String title;
     public String photoid;
-    public String clubName;
-    public String postid;
     public boolean approval;
     public int likes;
     public long time;
     public ArrayList<Comment> comments;
     public ArrayList<likesModel> likefids;
 
-    public postsModel() {
+    public NewPost() {
     }
 
-    public postsModel(String title, String photoid, String clubName, String postid, boolean approval, int likes, long time, ArrayList<Comment> comments, ArrayList<likesModel> likefids) {
+    public NewPost(String title, String photoid,boolean approval, int likes, long time, ArrayList<Comment> comments, ArrayList<likesModel> likefids) {
         this.title = title;
         this.photoid = photoid;
-        this.clubName = clubName;
-        this.postid = postid;
         this.approval = approval;
         this.likes = likes;
         this.time = time;
@@ -44,21 +39,6 @@ public class postsModel {
         this.photoid = photoid;
     }
 
-    public String getClubName() {
-        return clubName;
-    }
-
-    public void setClubName(String clubName) {
-        this.clubName = clubName;
-    }
-
-    public String getPostid() {
-        return postid;
-    }
-
-    public void setPostid(String postid) {
-        this.postid = postid;
-    }
 
     public boolean isApproval() {
         return approval;
@@ -109,5 +89,5 @@ public class postsModel {
     public void setPhotoid(String photoid) {
         this.photoid = photoid;
     }
-
 }
+

@@ -1,4 +1,4 @@
-package com.dev.manan.adminappec2018;
+package com.dev.manan.adminappec2018.Adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,6 +7,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+
+import com.dev.manan.adminappec2018.Models.Comment;
+import com.dev.manan.adminappec2018.R;
 
 import java.util.List;
 

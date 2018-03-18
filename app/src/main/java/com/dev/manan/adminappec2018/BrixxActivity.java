@@ -1,6 +1,5 @@
 package com.dev.manan.adminappec2018;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
@@ -8,21 +7,18 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.dev.manan.adminappec2018.Models.NotificationModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.zxing.Result;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
-import java.util.HashMap;
 
 
 public class BrixxActivity extends AppCompatActivity{
@@ -75,17 +71,17 @@ public class BrixxActivity extends AppCompatActivity{
             public void onClick(View view) {
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Notification");
 
-                String questionid = databaseReference.push().getKey();
-                HashMap<String, String> usermap1 = new HashMap<>();
+                String notificationid = databaseReference.push().getKey();
                 String text=editText.getText().toString();
+                long time= System.currentTimeMillis();
 
-                usermap1.put("text", text);
+                NotificationModel notificationModel=new NotificationModel(text,time);
 
-                databaseReference.child(questionid).setValue(usermap1).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                databaseReference.child(notificationid).setValue(notificationModel).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(getApplicationContext(),"yoyo",Toast.LENGTH_SHORT).show();
-
                     }
                 });
             }

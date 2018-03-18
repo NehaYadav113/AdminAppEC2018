@@ -1,4 +1,4 @@
-package com.dev.manan.adminappec2018;
+package com.dev.manan.adminappec2018.Models;
 
 /**
  * Created by Suneja's on 11-03-2018.
