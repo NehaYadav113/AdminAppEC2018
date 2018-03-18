@@ -8,6 +8,18 @@
     android:padding="8dp"
     tools:context="com.dev.manan.adminappec2018.LoginActivity">
 
+    <ImageView
+        android:id="@+id/iv_login_photo"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/background" />
+
+    <View
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#111"/>
+
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -47,4 +59,12 @@
         android:text="Login"
         android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/tv_developed_by_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="Elements Culmyca 18"
+        android:gravity="center"/>
 </LinearLayout>

@@ -8,4 +8,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="MyButton" parent="Theme.AppCompat.Light">
+        <item name="colorControlHighlight">@color/colorPrimaryDark</item>
+        <item name="colorButtonNormal">@color/yellow</item>
+    </style>
+
+    <!-- Application theme. -->
+    <style name="FullScreen" parent="@style/Theme.AppCompat.Light.NoActionBar" />
+
 </resources>

@@ -8,8 +8,6 @@ import java.util.ArrayList;
 
 public class postsModel {
 
-
-
     public String title;
     public String photoid;
     public String clubName;
@@ -99,8 +97,6 @@ public class postsModel {
     public void setLikefids(ArrayList<likesModel> likefids) {
         this.likefids = likefids;
     }
-
-
 
     public String getPhotoid() {
         return photoid;

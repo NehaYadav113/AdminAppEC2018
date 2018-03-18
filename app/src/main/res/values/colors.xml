@@ -3,5 +3,13 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="Black">#000000</color>
+    <color name="Black">#000000</color>\
+    <color name="baseDark">#f55246</color>
+    <color name="baseLight">#ed8979</color>
+    <color name="primaryFocused">#ae1010</color>
+    <color name="primaryPressed">#830202</color>
+    <color name="White">#FFF</color>
+    <color name="yellow">#ffb404</color>
+    <color name="xunbaotabs">#001d54</color>
+    <color name="xunbaotabselected">#0d1d54</color>
 </resources>

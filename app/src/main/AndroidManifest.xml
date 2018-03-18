@@ -9,20 +9,25 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ec_app_logo"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity">
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".BrixxActivity" >
-        </activity>
+        <activity
+            android:name=".BrixxActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreen" />
 
         <service android:name=".Services.MyFirebaseMessagingService">
             <intent-filter>
@@ -41,8 +46,12 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
 
-        <activity android:name=".PostActivity" />
-        <activity android:name=".CommentActivity"></activity>
+        <activity
+            android:name=".PostActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CommentActivity"
+            android:screenOrientation="portrait" />
 
     </application>
 

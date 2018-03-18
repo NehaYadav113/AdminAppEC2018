@@ -7,8 +7,6 @@ import java.util.ArrayList;
  */
 
 public class NewPost {
-
-
     public String title;
     public String photoid;
     public boolean approval;
@@ -79,8 +77,6 @@ public class NewPost {
     public void setLikefids(ArrayList<likesModel> likefids) {
         this.likefids = likefids;
     }
-
-
 
     public String getPhotoid() {
         return photoid;

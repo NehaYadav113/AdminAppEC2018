@@ -9,8 +9,7 @@ public class Comment {
     private long time;
     private String  imageUrl;
 
-    public Comment() {
-    }
+    public Comment() {}
 
     public Comment(String uname, String comment, long time, String imageUrl) {
         this.uname = uname;

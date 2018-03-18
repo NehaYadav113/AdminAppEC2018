@@ -5,14 +5,11 @@ package com.dev.manan.adminappec2018.Models;
  */
 
 public class NotificationModel {
-
     String text;
     long time;
 
     NotificationModel()
-    {
-
-    }
+    {}
 
     public String getText() {
         return text;
@@ -30,10 +27,9 @@ public class NotificationModel {
         this.time = time;
     }
 
-    NotificationModel(String text, long time)
+    public NotificationModel(String text, long time)
     {
         this.text=text;
         this.time=time;
-
     }
 }
