@@ -10,7 +10,7 @@
 
     <style name="MyButton" parent="Theme.AppCompat.Light">
         <item name="colorControlHighlight">@color/colorPrimaryDark</item>
-        <item name="colorButtonNormal">@color/yellow</item>
+        <item name="colorButtonNormal">#3b5998</item>
     </style>
 
     <!-- Application theme. -->
