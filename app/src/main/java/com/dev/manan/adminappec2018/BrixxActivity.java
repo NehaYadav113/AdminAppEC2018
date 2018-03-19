@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.dev.manan.adminappec2018.Models.NotificationModel;
+import com.dev.manan.adminappec2018.Models.PostModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
@@ -24,14 +25,17 @@ import com.google.zxing.integration.android.IntentResult;
 
 
 public class BrixxActivity extends AppCompatActivity {
-    private Button qrButton, postButton, notificationButton, viewposts;
-    private EditText editText, editTextTitle;
+    private Button qrButton, postButton, notificationButton, attachPhotoButton;
+    private EditText editText, editTextTitle, editTextPostTitle;
     SharedPreferences prefs;
     private IntentIntegrator qrScan;
-    ProgressDialog pd;
+    private ProgressDialog pd;
     int color = Color.rgb(59, 89, 152);
     int radius = 35; //radius will be 5px
     int strokeWidth = 20;
+    private DatabaseReference mDatabase;
+    private String clubName = "None";
+    private String CLUB_NAME = "clubname";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,28 +45,18 @@ public class BrixxActivity extends AppCompatActivity {
         com.google.firebase.messaging.FirebaseMessaging.getInstance().subscribeToTopic("Topic");
 
         prefs = getApplicationContext().getSharedPreferences("com.dev.manan.adminappec2018", Context.MODE_PRIVATE);
-
         final String token = prefs.getString("token", "");
         System.out.println(token);
 
+        editTextPostTitle = findViewById(R.id.edit_post_title);
         editTextTitle = findViewById(R.id.edit_heading);
         qrButton = (Button) findViewById(R.id.qrButton);
-//        postButton = (Button) findViewById(R.id.sendPost);
+        postButton = (Button) findViewById(R.id.send_post);
+        attachPhotoButton = findViewById(R.id.btn_attach_photo);
         notificationButton = (Button) findViewById(R.id.sendNotif);
         editText = (EditText) findViewById(R.id.edit);
-//        viewposts = (Button) findViewById(R.id.view_posts);
 
         qrScan = new IntentIntegrator(this);
-
-//        postButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                FragmentManager fm = getFragmentManager();
-//                AddPostFragment dialogFragment = new AddPostFragment();
-//                dialogFragment.show(fm, "Add Post Fragment");
-//            }
-//        });
-
         qrButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -76,6 +70,7 @@ public class BrixxActivity extends AppCompatActivity {
         gradientDrawable.setStroke(strokeWidth, color);
         qrButton.setBackground(gradientDrawable);
         notificationButton.setBackground(gradientDrawable);
+        postButton.setBackground(gradientDrawable);
 
         pd = new ProgressDialog(BrixxActivity.this);
         pd.setMessage("Sending Notification to Humans...");
@@ -112,14 +107,62 @@ public class BrixxActivity extends AppCompatActivity {
             }
         });
 
-//        viewposts.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                Intent i = new Intent(getApplicationContext(), PostActivity.class);
-//                startActivity(i);
-//            }
-//        });
+        pd = new ProgressDialog(BrixxActivity.this);
+        pd.setMessage("Posting post for Culmyca Times...");
+        pd.setCancelable(false);
+
+        Intent intent = getIntent();
+        Bundle bd = intent.getExtras();
+        if(bd != null)
+        {
+            clubName = bd.getString(CLUB_NAME);
+        }
+        Toast.makeText(this, "WELCOME "+ clubName.toUpperCase(), Toast.LENGTH_SHORT).show();
+
+        prefs = getSharedPreferences("com.dev.manan.adminappec2018", Context.MODE_PRIVATE);
+        final String token1 = prefs.getString("token", "");
+
+        if (token1.equals("63617168")) {
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child("Brixx");
+        } else {
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("posts").child("Manan");
+        }
+
+        //TODO
+        attachPhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(BrixxActivity.this, "Attach Poster Code!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        postButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Boolean checker = validateCredentialsPost();
+                pd.show();
+                String textPostTitle = editTextPostTitle.getText().toString();
+
+                if (checker) {
+                    long time = System.currentTimeMillis();
+                    String postID = mDatabase.push().getKey();
+                    String urlPhotoTemp = "https://firebasestorage.googleapis.com/v0/b/culmyca2018.appspot.com/o/final_image.jpeg?alt=media&token=e7685e47-6762-42d9-bc12-8b8484e0fe38";
+
+                    PostModel pm = new PostModel(textPostTitle, urlPhotoTemp, clubName, time);
+
+                    mDatabase.child(postID).setValue(pm).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            pd.dismiss();
+                            Toast.makeText(getApplicationContext(), "Post Successfully Posted!", Toast.LENGTH_SHORT).show();
+                            editTextPostTitle.setText("");
+                        }
+                    });
+                } else {
+                    pd.dismiss();
+                }
+            }
+        });
+
     }
 
     private Boolean validateCredentials() {
@@ -129,6 +172,14 @@ public class BrixxActivity extends AppCompatActivity {
         }
         if (editTextTitle.getText().toString().equals("")) {
             editTextTitle.setError("Enter Notification Title!");
+            return false;
+        }
+        return true;
+    }
+
+    private Boolean validateCredentialsPost() {
+        if (editTextPostTitle.getText().toString().equals("")) {
+            editTextPostTitle.setError("Enter a title for post!");
             return false;
         }
         return true;

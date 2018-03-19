@@ -24,6 +24,7 @@ public class LoginActivity extends AppCompatActivity {
     SharedPreferences prefs;
     private TextView devByTextView;
     private int unicode = 0x2764;
+    String CLUB_NAME = "clubname";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +58,6 @@ public class LoginActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 //progressDialog.show();
                 usr = username.getText().toString();
                 pass = password.getText().toString();
@@ -65,12 +65,14 @@ public class LoginActivity extends AppCompatActivity {
                 if (usr.equals("brixx") && pass.equals("12345678")) {
                     prefs.edit().putString("token", "63617168").apply();
                     Intent i = new Intent(LoginActivity.this, BrixxActivity.class);
+                    i.putExtra(CLUB_NAME, username.getText().toString() );
                     startActivity(i);
                 }
 
                 if (usr.equals("manan") && pass.equals("12345678")) {
                     prefs.edit().putString("token", "63617169").apply();
                     Intent i = new Intent(LoginActivity.this, BrixxActivity.class);
+                    i.putExtra(CLUB_NAME, username.getText().toString() );
                     startActivity(i);
                 }
 
@@ -127,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public String getEmojiByUnicode(int unicode){
+    public String getEmojiByUnicode(int unicode) {
         return new String(Character.toChars(unicode));
     }
 

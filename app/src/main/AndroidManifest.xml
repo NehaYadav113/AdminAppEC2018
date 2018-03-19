@@ -46,13 +46,6 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
 
-        <activity
-            android:name=".PostActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".CommentActivity"
-            android:screenOrientation="portrait" />
-
     </application>
 
 </manifest>
