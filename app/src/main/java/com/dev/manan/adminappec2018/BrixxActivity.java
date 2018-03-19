@@ -56,6 +56,15 @@ public class BrixxActivity extends AppCompatActivity {
         notificationButton = (Button) findViewById(R.id.sendNotif);
         editText = (EditText) findViewById(R.id.edit);
 
+        findViewById(R.id.imgbtn_log_out).setOnClickListener(new View.OnClickListener() {
+            //TODO
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(BrixxActivity.this, "Logout here!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
         qrScan = new IntentIntegrator(this);
         qrButton.setOnClickListener(new View.OnClickListener() {
             @Override
