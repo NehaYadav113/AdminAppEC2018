@@ -183,59 +183,58 @@ public class BrixxActivity extends AppCompatActivity {
                         progressDialog.setTitle("Uploading...");
                         progressDialog.setCancelable(false);
                         progressDialog.show();
+                        Bitmap bmp;
+                        try {
+                            bmp = MediaStore.Images.Media.getBitmap(BrixxActivity.this.getContentResolver(), filePath);
+                            bmp = Bitmap.createScaledBitmap(bmp, 750, (int) ((float) bmp.getHeight() / bmp.getWidth() * 750), true);
 
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
-                        byte[] data = baos.toByteArray();
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                            byte[] data = baos.toByteArray();
 
-                        UploadTask uploadTask = (UploadTask) mountainsRef.putBytes(data)
-                                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                    @Override
-                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                        progressDialog.dismiss();
-                                        Uri downloadlink = taskSnapshot.getDownloadUrl();
-                                        urlPhotoTemp[0] = downloadlink.toString();
+                            mountainsRef.putBytes(data)
+                                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                            progressDialog.dismiss();
+                                            Uri downloadlink = taskSnapshot.getDownloadUrl();
+                                            urlPhotoTemp[0] = downloadlink.toString();
 
-                                        PostModel pm = new PostModel(textPostTitle, urlPhotoTemp[0], clubName, time);
+                                            PostModel pm = new PostModel(textPostTitle, urlPhotoTemp[0], clubName, time);
 
-                                        mDatabase.child(postID).setValue(pm).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                pd.dismiss();
-                                                Toast.makeText(getApplicationContext(), "Post Successfully Posted!", Toast.LENGTH_SHORT).show();
-                                                editTextPostTitle.setText("");
-                                            }
-                                        });
-                                        Toast.makeText(BrixxActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        progressDialog.dismiss();
-                                        Toast.makeText(BrixxActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                })
-                                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                                    @Override
-                                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                                        double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
-                                                .getTotalByteCount());
-                                        progressDialog.setMessage("Uploaded " + (int) progress + "%");
-                                    }
-                                });
+                                            mDatabase.child(postID).setValue(pm).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    pd.dismiss();
+                                                    Toast.makeText(getApplicationContext(), "Post Successfully Posted!", Toast.LENGTH_SHORT).show();
+                                                    editTextPostTitle.setText("");
+                                                }
+                                            });
+                                            Toast.makeText(BrixxActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            progressDialog.dismiss();
+                                            Toast.makeText(BrixxActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                                                    .getTotalByteCount());
+                                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                                        }
+                                    });
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
                     } else {
-
-                        PostModel pm = new PostModel(textPostTitle, urlPhotoTemp[0], clubName, time);
-
-                        mDatabase.child(postID).setValue(pm).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                pd.dismiss();
-                                Toast.makeText(getApplicationContext(), "Post Successfully Posted!", Toast.LENGTH_SHORT).show();
-                                editTextPostTitle.setText("");
-                            }
-                        });
+                        pd.dismiss();
+                        Toast.makeText(BrixxActivity.this, "Upload a Poster First", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     pd.dismiss();
