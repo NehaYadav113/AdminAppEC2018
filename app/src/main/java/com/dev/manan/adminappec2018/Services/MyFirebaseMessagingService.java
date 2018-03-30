@@ -9,7 +9,7 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.dev.manan.adminappec2018.BrixxActivity;
+import com.dev.manan.adminappec2018.Views.BrixxActivity;
 import com.dev.manan.adminappec2018.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;

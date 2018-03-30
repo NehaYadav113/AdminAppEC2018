@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="8dp"
-    tools:context="com.dev.manan.adminappec2018.LoginActivity">
+    tools:context="com.dev.manan.adminappec2018.Views.LoginActivity">
 
     <ImageView
         android:id="@+id/iv_login_photo"
