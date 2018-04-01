@@ -122,6 +122,7 @@ public class LoginActivity extends AppCompatActivity {
                                 prefs.edit().putString("token", jObject.getString("token"))
                                         .putString("username", jObject.getString("username"))
                                         .apply();
+
                                 if(jObject.getString("username").equals("brixx")){
 
                                     Intent intent = new Intent(LoginActivity.this, BrixxActivity.class);
