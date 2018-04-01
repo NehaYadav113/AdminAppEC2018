@@ -122,10 +122,17 @@ public class LoginActivity extends AppCompatActivity {
                                 prefs.edit().putString("token", jObject.getString("token"))
                                         .putString("username", jObject.getString("username"))
                                         .apply();
+                                if(jObject.getString("username").equals("brixx")){
 
-                                Intent intent = new Intent(LoginActivity.this, BrixxActivity.class);
-                                startActivity(intent);
-                                finish();
+                                    Intent intent = new Intent(LoginActivity.this, BrixxActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }else
+                                {
+                                    Intent intent = new Intent(LoginActivity.this, other_clubs.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
                             } else {
                                 MDToast.makeText(LoginActivity.this, "Wrong credentials", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
                             }
