@@ -123,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
                                         .putString("username", jObject.getString("username"))
                                         .apply();
 
-                                if(jObject.getString("username").equals("brixx")){
+                                if(jObject.getString("username").equals("Brixx")){
 
                                     Intent intent = new Intent(LoginActivity.this, BrixxActivity.class);
                                     startActivity(intent);
