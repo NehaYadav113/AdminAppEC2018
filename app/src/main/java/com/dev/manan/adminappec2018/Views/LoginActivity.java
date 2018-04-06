@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
 
         String s1 = "Developed with ";
         String s2 = " by ";
-        String s3 = "<b> Manan! </b>";
+        String s3 = "<b> MANAN </b>";
         devByTextView.setText(s1 + getEmojiByUnicode(unicode) + s2 + Html.fromHtml(s3));
 
         prefs = getApplicationContext().getSharedPreferences("com.dev.manan.adminappec2018", Context.MODE_PRIVATE);
@@ -79,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // Code for Launch checker if Login or not!
+// Code for on Launch checker --- If Login or not!
         String restoredUsername = prefs.getString("username", null);
         if (restoredUsername != null) {
             Intent intent = new Intent(LoginActivity.this, BrixxActivity.class);
@@ -93,8 +93,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void ClubSignIn() {
-        usr = username.getText().toString();
-        pass = password.getText().toString();
+        usr = username.getText().toString().trim();
+        pass = password.getText().toString().trim();
 
         if (usr.isEmpty()) {
             username.setError("Enter username!");
@@ -123,21 +123,18 @@ public class LoginActivity extends AppCompatActivity {
                                         .putString("username", jObject.getString("username"))
                                         .apply();
 
-                                if(jObject.getString("username").equals("Brixx")){
-
+                                if (jObject.getString("username").equals("Brixx") || jObject.getString("username").equals("uadmin")) {
                                     Intent intent = new Intent(LoginActivity.this, BrixxActivity.class);
                                     startActivity(intent);
                                     finish();
-                                }else
-                                {
-                                    Intent intent = new Intent(LoginActivity.this, other_clubs.class);
+                                } else {
+                                    Intent intent = new Intent(LoginActivity.this, OtherClubsActivity.class);
                                     startActivity(intent);
                                     finish();
                                 }
                             } else {
                                 MDToast.makeText(LoginActivity.this, "Wrong credentials", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
                             }
-
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

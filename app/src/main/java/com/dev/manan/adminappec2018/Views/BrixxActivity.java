@@ -74,6 +74,7 @@ public class BrixxActivity extends AppCompatActivity {
         prefs = getApplicationContext().getSharedPreferences("com.dev.manan.adminappec2018", Context.MODE_PRIVATE);
         token = prefs.getString("token", "");
         userName = prefs.getString("username", "");
+
         if(userName.equals("uadmin")){
             userName = "Brixx";
         }
@@ -126,7 +127,7 @@ public class BrixxActivity extends AppCompatActivity {
 
         pdN = new ProgressDialog(BrixxActivity.this);
         pdN.setMessage("Sending Notification to Humans...");
-        pdN.setCancelable(false);
+//        pdN.setCancelable(false);
         pdN.setCanceledOnTouchOutside(false);
 
         notificationButton.setOnClickListener(new View.OnClickListener() {
@@ -134,7 +135,7 @@ public class BrixxActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (isNetworkAvailable()) {
                     pdN.show();
-//                    SendNotification();
+                    SendNotification();
                 } else {
                     MDToast.makeText(BrixxActivity.this, "Connect to internet!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING).show();
                 }
@@ -147,12 +148,6 @@ public class BrixxActivity extends AppCompatActivity {
         pd.setMessage("Posting post for Culmyca Times...");
         pd.setCancelable(false);
         pd.setCanceledOnTouchOutside(false);
-
-//        Intent intent = getIntent();
-//        Bundle bd = intent.getExtras();
-//        if (bd != null) {
-//            clubName = bd.getString(CLUB_NAME);
-//        }
 
         MDToast.makeText(this, "WELCOME " + userName.toUpperCase() + " !", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS).show();
 

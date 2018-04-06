@@ -39,7 +39,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Random;
 
-public class other_clubs extends AppCompatActivity {
+public class OtherClubsActivity extends AppCompatActivity {
     private Button qrButton, postButton, attachPhotoButton;
     private EditText editTextPostTitle;
     private SharedPreferences prefs;
@@ -49,8 +49,6 @@ public class other_clubs extends AppCompatActivity {
     int radius = 35;
     int strokeWidth = 20;
     private DatabaseReference mDatabase;
-    //    private String clubName = "None";
-//    private String CLUB_NAME = "clubname";
     private Uri filePath = null;
     private final int PICK_IMAGE_REQUEST = 71;
     private StorageReference mStorageRef;
@@ -61,7 +59,6 @@ public class other_clubs extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_other_clubs);
 
-
         com.google.firebase.messaging.FirebaseMessaging.getInstance().subscribeToTopic("Topic");
 
         mStorageRef = FirebaseStorage.getInstance().getReference();
@@ -69,6 +66,7 @@ public class other_clubs extends AppCompatActivity {
         prefs = getApplicationContext().getSharedPreferences("com.dev.manan.adminappec2018", Context.MODE_PRIVATE);
         token = prefs.getString("token", "");
         userName = prefs.getString("username", "");
+
         if(userName.equals("uadmin")){
             userName = "Brixx";
         }
@@ -81,7 +79,7 @@ public class other_clubs extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 prefs.edit().clear().apply();
-                Intent i = new Intent(other_clubs.this, LoginActivity.class)
+                Intent i = new Intent(OtherClubsActivity.this, LoginActivity.class)
                         .putExtra("logout", true);
                 startActivity(i);
                 finish();
@@ -93,7 +91,8 @@ public class other_clubs extends AppCompatActivity {
         gradientDrawable.setStroke(strokeWidth, color);
         qrButton.setBackground(gradientDrawable);
         postButton.setBackground(gradientDrawable);
-        // QR Scan Code!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+// QR Scan Code!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         qrScan = new IntentIntegrator(this);
         qrButton.setOnClickListener(new View.OnClickListener() {
@@ -102,18 +101,13 @@ public class other_clubs extends AppCompatActivity {
                 qrScan.initiateScan();
             }
         });
-        // Culmyca Times Post Code!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-        pd = new ProgressDialog(other_clubs.this);
+// Culmyca Times Post Code!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        pd = new ProgressDialog(OtherClubsActivity.this);
         pd.setMessage("Posting post for Culmyca Times...");
         pd.setCancelable(false);
         pd.setCanceledOnTouchOutside(false);
-
-//        Intent intent = getIntent();
-//        Bundle bd = intent.getExtras();
-//        if (bd != null) {
-//            clubName = bd.getString(CLUB_NAME);
-//        }
 
         MDToast.makeText(this, "WELCOME " + userName.toUpperCase() + " !", Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS).show();
 
@@ -122,7 +116,7 @@ public class other_clubs extends AppCompatActivity {
         attachPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MDToast.makeText(other_clubs.this, "Select a Poster now!", Toast.LENGTH_SHORT, MDToast.TYPE_INFO).show();
+                MDToast.makeText(OtherClubsActivity.this, "Select a Poster now!", Toast.LENGTH_SHORT, MDToast.TYPE_INFO).show();
                 chooseImage();
             }
         });
@@ -133,7 +127,7 @@ public class other_clubs extends AppCompatActivity {
                 if (isNetworkAvailable()) {
                     PostET();
                 } else {
-                    MDToast.makeText(other_clubs.this, "Connect to internet!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING).show();
+                    MDToast.makeText(OtherClubsActivity.this, "Connect to internet!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING).show();
                 }
             }
         });
@@ -152,14 +146,14 @@ public class other_clubs extends AppCompatActivity {
 
             StorageReference mountainsRef = mStorageRef.child("postImages/" + token + getSaltString() + ".jpg");
             if (filePath != null) {
-                final ProgressDialog progressDialog = new ProgressDialog(other_clubs.this);
+                final ProgressDialog progressDialog = new ProgressDialog(OtherClubsActivity.this);
                 progressDialog.setTitle("Uploading...");
                 progressDialog.setCancelable(false);
                 progressDialog.setCanceledOnTouchOutside(false);
                 progressDialog.show();
                 Bitmap bmp;
                 try {
-                    bmp = MediaStore.Images.Media.getBitmap(other_clubs.this.getContentResolver(), filePath);
+                    bmp = MediaStore.Images.Media.getBitmap(OtherClubsActivity.this.getContentResolver(), filePath);
                     bmp = Bitmap.createScaledBitmap(bmp, 750, (int) ((float) bmp.getHeight() / bmp.getWidth() * 750), true);
 
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -185,14 +179,14 @@ public class other_clubs extends AppCompatActivity {
                                             attachPhotoButton.setVisibility(View.VISIBLE);
                                         }
                                     });
-                                    MDToast.makeText(other_clubs.this, "Uploaded!", Toast.LENGTH_SHORT, MDToast.TYPE_INFO).show();
+                                    MDToast.makeText(OtherClubsActivity.this, "Uploaded!", Toast.LENGTH_SHORT, MDToast.TYPE_INFO).show();
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     progressDialog.dismiss();
-                                    MDToast.makeText(other_clubs.this, "Failed!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
+                                    MDToast.makeText(OtherClubsActivity.this, "Failed!", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
                                 }
                             })
                             .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -209,7 +203,7 @@ public class other_clubs extends AppCompatActivity {
 
             } else {
                 pd.dismiss();
-                MDToast.makeText(other_clubs.this, "Upload a Poster First!", Toast.LENGTH_SHORT, MDToast.TYPE_INFO).show();
+                MDToast.makeText(OtherClubsActivity.this, "Upload a Poster First!", Toast.LENGTH_SHORT, MDToast.TYPE_INFO).show();
             }
         } else {
             pd.dismiss();
@@ -222,6 +216,7 @@ public class other_clubs extends AppCompatActivity {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
     }
+
     private Boolean validateCredentialsPost() {
         if (editTextPostTitle.getText().toString().equals("")) {
             editTextPostTitle.setError("Enter a title for post!");
@@ -229,6 +224,7 @@ public class other_clubs extends AppCompatActivity {
         }
         return true;
     }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
@@ -265,6 +261,7 @@ public class other_clubs extends AppCompatActivity {
         String saltStr = salt.toString();
         return saltStr;
     }
+
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -274,7 +271,7 @@ public class other_clubs extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        other_clubs.this.finish();
+        OtherClubsActivity.this.finish();
         System.exit(0);
     }
 }

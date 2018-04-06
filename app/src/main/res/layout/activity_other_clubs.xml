@@ -74,7 +74,7 @@
                     android:id="@+id/qrButton"
                     android:layout_width="200dp"
                     android:layout_height="70dp"
-                    android:layout_margin="5dp"
+                    android:layout_margin="10dp"
                     android:text="Scan QR Code"
                     android:textColor="@color/White"
                     android:theme="@style/MyButton" />
@@ -132,7 +132,7 @@
                     android:id="@+id/send_post"
                     android:layout_width="200dp"
                     android:layout_height="70dp"
-                    android:layout_margin="5dp"
+                    android:layout_margin="10dp"
                     android:text="Post it"
                     android:textColor="@color/White"
                     android:theme="@style/MyButton" />

@@ -47,7 +47,10 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
 
-        <activity android:name=".Views.other_clubs"></activity>
+        <activity
+            android:name=".Views.OtherClubsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreen" />
     </application>
 
 </manifest>
