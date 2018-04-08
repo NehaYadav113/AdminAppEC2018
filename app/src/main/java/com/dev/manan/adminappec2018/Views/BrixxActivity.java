@@ -14,12 +14,20 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.dev.manan.adminappec2018.Models.NotificationModel;
 import com.dev.manan.adminappec2018.Models.PostModel;
 import com.dev.manan.adminappec2018.R;
@@ -37,8 +45,12 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.valdesekamdem.library.mdtoast.MDToast;
 
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 
@@ -119,7 +131,12 @@ public class BrixxActivity extends AppCompatActivity {
         qrButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                qrScan.initiateScan();
+                if(isNetworkAvailable()) {
+                    qrScan.initiateScan();
+                }
+                else {
+                    MDToast.makeText(BrixxActivity.this, "Connect to internet!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING).show();
+                }
             }
         });
 
@@ -311,7 +328,8 @@ public class BrixxActivity extends AppCompatActivity {
             if (result.getContents() == null) {
                 MDToast.makeText(this, "Cancelled!", Toast.LENGTH_LONG, MDToast.TYPE_INFO).show();
             } else {
-                MDToast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG, MDToast.TYPE_SUCCESS).show();
+
+                getPaymentStatus(result.getContents());
             }
         } else {
             // This is important, otherwise the result will not be passed to the fragment
@@ -353,5 +371,47 @@ public class BrixxActivity extends AppCompatActivity {
     public void onBackPressed() {
         BrixxActivity.this.finish();
         System.exit(0);
+    }
+    private void getPaymentStatus(final String content) {
+        String url ="https://elementsculmyca2018.herokuapp.com/api/v1/events/approvepayment";
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    Log.d("prerna",response);
+                    JSONObject obj = new JSONObject(response);
+                    int status = obj.getInt("success");
+                    String msg = obj.getString("msg");
+                    Log.d("abc",Integer.toString(status));
+                    if(status == 1){
+                        Log.d("abc",Integer.toString(status));
+                        MDToast.makeText(BrixxActivity.this, "Payment Successful", Toast.LENGTH_LONG, MDToast.TYPE_SUCCESS).show();
+                    }
+                    if(status == 0 && msg.equals("Payment Already Done!")){
+                     MDToast.makeText(BrixxActivity.this,"Payment Already Done!",Toast.LENGTH_LONG,MDToast.TYPE_INFO).show();
+                    }
+
+                }
+                catch (Exception e) {
+                    // If an error occurs, this prints the error to the log
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                Map<String, String> map = new HashMap<String, String>();
+                map.put("admintoken", token);
+                map.put("qrcode", content);
+                return map;
+            }
+        };
+        queue.add(request);
     }
 }
