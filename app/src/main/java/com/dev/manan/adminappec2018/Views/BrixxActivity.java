@@ -71,7 +71,7 @@ public class BrixxActivity extends AppCompatActivity {
     private StorageReference mStorageRef;
     private Bitmap bitmap;
     private String userName, token;
-    LinearLayout notifyLinearLayout;
+    LinearLayout notifyLinearLayout, postLinearLayout;
     View notifyView;
 
     @Override
@@ -87,6 +87,11 @@ public class BrixxActivity extends AppCompatActivity {
         token = prefs.getString("token", "");
         userName = prefs.getString("username", "");
 
+        notifyLinearLayout = findViewById(R.id.ll_notification);
+        postLinearLayout = findViewById(R.id.ll_add_post);
+
+
+
         if(userName.equals("uadmin")){
             userName = "Brixx";
         }
@@ -98,7 +103,6 @@ public class BrixxActivity extends AppCompatActivity {
         attachPhotoButton = findViewById(R.id.btn_attach_photo);
         notificationButton = (Button) findViewById(R.id.sendNotif);
         editText = (EditText) findViewById(R.id.edit);
-        notifyLinearLayout = findViewById(R.id.ll_notification);
         notifyView = findViewById(R.id.view_notification);
 
         findViewById(R.id.imgbtn_log_out).setOnClickListener(new View.OnClickListener() {
@@ -413,5 +417,15 @@ public class BrixxActivity extends AppCompatActivity {
             }
         };
         queue.add(request);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String status = prefs.getString("status", "calm");
+        if(status.equals("calm")){
+            notifyLinearLayout.setVisibility(View.GONE);
+            postLinearLayout.setVisibility(View.GONE);
+        }
     }
 }

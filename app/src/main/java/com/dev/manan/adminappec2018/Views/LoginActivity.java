@@ -2,17 +2,21 @@ package com.dev.manan.adminappec2018.Views;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -124,9 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                                         .apply();
 
                                 if (jObject.getString("username").equals("Brixx") || jObject.getString("username").equals("uadmin")) {
-                                    Intent intent = new Intent(LoginActivity.this, BrixxActivity.class);
-                                    startActivity(intent);
-                                    finish();
+                                    showDialogBox();
                                 } else {
                                     Intent intent = new Intent(LoginActivity.this, OtherClubsActivity.class);
                                     startActivity(intent);
@@ -158,6 +160,42 @@ public class LoginActivity extends AppCompatActivity {
 
         requestQueue.add(postRequest);
 
+    }
+
+    private void showDialogBox() {
+        final EditText input = new EditText(LoginActivity.this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        final AlertDialog.Builder alert = new AlertDialog.Builder(LoginActivity.this);
+        final LinearLayout layout = new LinearLayout(LoginActivity.this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.removeAllViews();
+        alert.setTitle("Enter Secret Key");
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        layoutParams.setMargins(30, 0, 30, 0);
+
+        input.setLayoutParams(layoutParams);
+
+        layout.addView(input);
+
+        alert.setView(layout).setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(input.getText().toString().equals("calm")){
+                    prefs.edit().putString("status", "calm").apply();
+                    Intent intent = new Intent(LoginActivity.this, BrixxActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else if(input.getText().toString().equals("chaos")){
+                    prefs.edit().putString("status", "chaos").apply();
+                    Intent intent = new Intent(LoginActivity.this, BrixxActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        }).show();
     }
 
     private boolean isNetworkAvailable() {
