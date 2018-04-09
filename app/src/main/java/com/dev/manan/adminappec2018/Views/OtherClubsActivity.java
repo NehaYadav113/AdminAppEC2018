@@ -2,6 +2,7 @@ package com.dev.manan.adminappec2018.Views;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -18,6 +19,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -51,6 +54,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import static java.lang.Math.min;
+
 public class OtherClubsActivity extends AppCompatActivity {
     private Button qrButton, postButton, attachPhotoButton;
     private EditText editTextPostTitle;
@@ -61,11 +66,14 @@ public class OtherClubsActivity extends AppCompatActivity {
     int radius = 35;
     int strokeWidth = 20;
     private DatabaseReference mDatabase;
+    private LinearLayout postView;
     private Uri filePath = null;
     private final int PICK_IMAGE_REQUEST = 71;
     private StorageReference mStorageRef;
     private Bitmap bitmap;
     private String userName, token;
+    private ImageView currImage, crossButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,10 +90,24 @@ public class OtherClubsActivity extends AppCompatActivity {
         if(userName.equals("uadmin")){
             userName = "Brixx";
         }
+
+        currImage = (ImageView) findViewById(R.id.iv_poster_selected);
+        crossButton = (ImageView) findViewById(R.id.iv_deselect);
+        postView = (LinearLayout) findViewById(R.id.ll_add_post);
         editTextPostTitle = findViewById(R.id.edit_post_title);
         qrButton = (Button) findViewById(R.id.qrButton);
         postButton = (Button) findViewById(R.id.send_post);
         attachPhotoButton = findViewById(R.id.btn_attach_photo);
+
+        crossButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                crossButton.setVisibility(View.GONE);
+                currImage.setVisibility(View.GONE);
+                attachPhotoButton.setVisibility(View.VISIBLE);
+                filePath = null;
+            }
+        });
 
         findViewById(R.id.imgbtn_log_out).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -257,7 +279,13 @@ public class OtherClubsActivity extends AppCompatActivity {
                     && data != null && data.getData() != null) {
                 filePath = data.getData();
                 try {
+                    currImage.setVisibility(View.VISIBLE);
+                    crossButton.setVisibility(View.VISIBLE);
                     bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+                    float finalWidth = min(100, bitmap.getWidth());
+                    bitmap = Bitmap.createScaledBitmap(bitmap, (int) finalWidth, (int) (finalWidth / bitmap.getWidth() * bitmap.getHeight()),
+                            true);
+                    currImage.setImageBitmap(bitmap);
                     MDToast.makeText(this, "Image selected successfully.", Toast.LENGTH_LONG, MDToast.TYPE_INFO).show();
                     attachPhotoButton.setVisibility(View.GONE);
                 } catch (IOException e) {
@@ -305,15 +333,47 @@ public class OtherClubsActivity extends AppCompatActivity {
                     Log.d("def" ,Integer.toString(status));
                     if(status == 1){
                         MDToast.makeText(OtherClubsActivity.this , "Successfully arrived" , Toast.LENGTH_LONG ,MDToast.TYPE_SUCCESS).show();
+                        final android.support.v7.app.AlertDialog.Builder alert = new android.support.v7.app.AlertDialog.Builder(OtherClubsActivity.this);
+
+                        alert.setTitle("Arrival Status").setMessage("Successfully arrived").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).show();
                     }
                     if(status == 0 && msg.equals("Already Arrived!")){
                         MDToast.makeText(OtherClubsActivity.this,"Already Arrived!",Toast.LENGTH_LONG,MDToast.TYPE_INFO).show();
+                        final android.support.v7.app.AlertDialog.Builder alert = new android.support.v7.app.AlertDialog.Builder(OtherClubsActivity.this);
+
+                        alert.setTitle("Arrival Status").setMessage("Already Arrived!").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).show();
                     }
                     if(status == 0 && msg.equals("Cross Login not Authorized!")){
                         MDToast.makeText(OtherClubsActivity.this,"Cross Login not Authorized!",Toast.LENGTH_LONG,MDToast.TYPE_INFO).show();
+                        final android.support.v7.app.AlertDialog.Builder alert = new android.support.v7.app.AlertDialog.Builder(OtherClubsActivity.this);
+
+                        alert.setTitle("Arrival Status").setMessage("Cross Login not Authorized!").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).show();
                     }
                     if(status == 0 && msg.equals("Payment not Done!")){
                         MDToast.makeText(OtherClubsActivity.this,"Payment not Done!",Toast.LENGTH_LONG,MDToast.TYPE_INFO).show();
+                        final android.support.v7.app.AlertDialog.Builder alert = new android.support.v7.app.AlertDialog.Builder(OtherClubsActivity.this);
+
+                        alert.setTitle("Arrival Status").setMessage("Payment not Done!").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).show();
                     }
 
 
@@ -338,6 +398,15 @@ public class OtherClubsActivity extends AppCompatActivity {
             }
         };
         queue.add(request);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String status = prefs.getString("status", "calm");
+        if (status.equals("calm")) {
+            postView.setVisibility(View.GONE);
+        }
     }
 }
 

@@ -128,11 +128,9 @@ public class LoginActivity extends AppCompatActivity {
                                         .apply();
 
                                 if (jObject.getString("username").equals("Brixx") || jObject.getString("username").equals("uadmin")) {
-                                    showDialogBox();
+                                    showDialogBox(0);
                                 } else {
-                                    Intent intent = new Intent(LoginActivity.this, OtherClubsActivity.class);
-                                    startActivity(intent);
-                                    finish();
+                                    showDialogBox(1);
                                 }
                             } else {
                                 MDToast.makeText(LoginActivity.this, "Wrong credentials", Toast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
@@ -162,7 +160,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void showDialogBox() {
+    private void showDialogBox(final int val) {
         final EditText input = new EditText(LoginActivity.this);
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         final AlertDialog.Builder alert = new AlertDialog.Builder(LoginActivity.this);
@@ -185,14 +183,26 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 if(input.getText().toString().equals("calm")){
                     prefs.edit().putString("status", "calm").apply();
-                    Intent intent = new Intent(LoginActivity.this, BrixxActivity.class);
-                    startActivity(intent);
-                    finish();
+                    if(val == 0) {
+                        Intent intent = new Intent(LoginActivity.this, BrixxActivity.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Intent intent = new Intent(LoginActivity.this, OtherClubsActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
                 } else if(input.getText().toString().equals("chaos")){
                     prefs.edit().putString("status", "chaos").apply();
-                    Intent intent = new Intent(LoginActivity.this, BrixxActivity.class);
-                    startActivity(intent);
-                    finish();
+                    if(val == 0) {
+                        Intent intent = new Intent(LoginActivity.this, BrixxActivity.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Intent intent = new Intent(LoginActivity.this, OtherClubsActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
                 }
             }
         }).show();

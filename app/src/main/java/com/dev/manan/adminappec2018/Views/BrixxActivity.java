@@ -1,7 +1,9 @@
 package com.dev.manan.adminappec2018.Views;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -18,6 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -53,18 +56,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import static java.lang.Math.min;
+
 
 public class BrixxActivity extends AppCompatActivity {
     private Button qrButton, postButton, notificationButton, attachPhotoButton;
     private EditText editText, editTextTitle, editTextPostTitle;
     private SharedPreferences prefs;
     private IntentIntegrator qrScan;
-    private ProgressDialog pd,pdN;
+    private ProgressDialog pd, pdN;
     int color = Color.rgb(59, 89, 152);
     int radius = 35;
     int strokeWidth = 20;
     private DatabaseReference mDatabase;
-//    private String clubName = "None";
+    //    private String clubName = "None";
 //    private String CLUB_NAME = "clubname";
     private Uri filePath = null;
     private final int PICK_IMAGE_REQUEST = 71;
@@ -73,6 +78,7 @@ public class BrixxActivity extends AppCompatActivity {
     private String userName, token;
     LinearLayout notifyLinearLayout, postLinearLayout;
     View notifyView;
+    private ImageView currImage, crossButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,11 +97,12 @@ public class BrixxActivity extends AppCompatActivity {
         postLinearLayout = findViewById(R.id.ll_add_post);
 
 
-
-        if(userName.equals("uadmin")){
+        if (userName.equals("uadmin")) {
             userName = "Brixx";
         }
 
+        currImage = (ImageView) findViewById(R.id.iv_poster_selected);
+        crossButton = (ImageView) findViewById(R.id.iv_deselect);
         editTextPostTitle = findViewById(R.id.edit_post_title);
         editTextTitle = findViewById(R.id.edit_heading);
         qrButton = (Button) findViewById(R.id.qrButton);
@@ -104,6 +111,16 @@ public class BrixxActivity extends AppCompatActivity {
         notificationButton = (Button) findViewById(R.id.sendNotif);
         editText = (EditText) findViewById(R.id.edit);
         notifyView = findViewById(R.id.view_notification);
+
+        crossButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                crossButton.setVisibility(View.GONE);
+                currImage.setVisibility(View.GONE);
+                attachPhotoButton.setVisibility(View.VISIBLE);
+                filePath = null;
+            }
+        });
 
         findViewById(R.id.imgbtn_log_out).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,7 +141,7 @@ public class BrixxActivity extends AppCompatActivity {
         notificationButton.setBackground(gradientDrawable);
         postButton.setBackground(gradientDrawable);
 
-        if(!userName.equals("Brixx")){
+        if (!userName.equals("Brixx")) {
             notifyLinearLayout.setVisibility(View.GONE);
             notifyView.setVisibility(View.GONE);
         }
@@ -135,10 +152,9 @@ public class BrixxActivity extends AppCompatActivity {
         qrButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isNetworkAvailable()) {
+                if (isNetworkAvailable()) {
                     qrScan.initiateScan();
-                }
-                else {
+                } else {
                     MDToast.makeText(BrixxActivity.this, "Connect to internet!", Toast.LENGTH_SHORT, MDToast.TYPE_WARNING).show();
                 }
             }
@@ -342,7 +358,13 @@ public class BrixxActivity extends AppCompatActivity {
                     && data != null && data.getData() != null) {
                 filePath = data.getData();
                 try {
+                    currImage.setVisibility(View.VISIBLE);
+                    crossButton.setVisibility(View.VISIBLE);
                     bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+                    float finalWidth = min(100, bitmap.getWidth());
+                    bitmap = Bitmap.createScaledBitmap(bitmap, (int) finalWidth, (int) (finalWidth / bitmap.getWidth() * bitmap.getHeight()),
+                            true);
+                    currImage.setImageBitmap(bitmap);
                     MDToast.makeText(this, "Image selected successfully.", Toast.LENGTH_LONG, MDToast.TYPE_INFO).show();
                     attachPhotoButton.setVisibility(View.GONE);
                 } catch (IOException e) {
@@ -376,28 +398,45 @@ public class BrixxActivity extends AppCompatActivity {
         BrixxActivity.this.finish();
         System.exit(0);
     }
+
     private void getPaymentStatus(final String content) {
-        String url ="https://elementsculmyca2018.herokuapp.com/api/v1/events/approvepayment";
+        String url = "https://elementsculmyca2018.herokuapp.com/api/v1/events/approvepayment";
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
-                    Log.d("prerna",response);
+                    Log.d("prerna", response);
                     JSONObject obj = new JSONObject(response);
                     int status = obj.getInt("success");
                     String msg = obj.getString("msg");
-                    Log.d("abc",Integer.toString(status));
-                    if(status == 1){
-                        Log.d("abc",Integer.toString(status));
+                    Log.d("abc", Integer.toString(status));
+                    if (status == 1) {
+                        Log.d("abc", Integer.toString(status));
                         MDToast.makeText(BrixxActivity.this, "Payment Successful", Toast.LENGTH_LONG, MDToast.TYPE_SUCCESS).show();
+                        final android.support.v7.app.AlertDialog.Builder alert = new android.support.v7.app.AlertDialog.Builder(BrixxActivity.this);
+
+                        alert.setTitle("Payment Status").setMessage("Payment Successful").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).show();
+
                     }
-                    if(status == 0 && msg.equals("Payment Already Done!")){
-                     MDToast.makeText(BrixxActivity.this,"Payment Already Done!",Toast.LENGTH_LONG,MDToast.TYPE_INFO).show();
+                    if (status == 0 && msg.equals("Payment Already Done!")) {
+                        MDToast.makeText(BrixxActivity.this, "Payment Already Done!", Toast.LENGTH_LONG, MDToast.TYPE_INFO).show();
+
+                        final android.support.v7.app.AlertDialog.Builder alert = new android.support.v7.app.AlertDialog.Builder(BrixxActivity.this);
+                        alert.setTitle("Payment Status").setMessage("Payment Already Done!").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).show();
                     }
 
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     // If an error occurs, this prints the error to the log
 
                 }
@@ -423,7 +462,7 @@ public class BrixxActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         String status = prefs.getString("status", "calm");
-        if(status.equals("calm")){
+        if (status.equals("calm")) {
             notifyLinearLayout.setVisibility(View.GONE);
             postLinearLayout.setVisibility(View.GONE);
         }
